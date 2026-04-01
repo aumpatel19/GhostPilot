@@ -18,28 +18,40 @@ A floating, always-on-top AI browser panel for Windows 11 that is **invisible to
 
 ---
 
-## Requirements
+## Quick Start (No install needed)
 
-- Windows 10 / 11
-- [Node.js LTS](https://nodejs.org) (v18 or higher)
+1. Download the latest release
+2. Extract the zip
+3. Double-click **`GhostPilot.exe`**
+
+That's it. No Node.js, no terminal, no install.
 
 ---
 
-## Setup
+## Run from Source
 
-**First time only:**
+**Requirements:** [Node.js LTS](https://nodejs.org)
 
+**First time:**
 ```
 Double-click setup.bat
 ```
 
-This installs dependencies and launches the app.
-
-**After that, just use:**
-
+**After that:**
 ```
 Double-click start.bat
 ```
+
+---
+
+## Build Exe Yourself
+
+```bash
+npm install
+npm run build
+```
+
+Output: `dist/GhostPilot-win32-x64/GhostPilot.exe`
 
 ---
 

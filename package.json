@@ -3,9 +3,30 @@
   "version": "2.0.0",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build": "electron-builder --win portable"
   },
   "devDependencies": {
-    "electron": "^28.3.3"
+    "electron": "^28.3.3",
+    "electron-builder": "^24.13.3",
+    "electron-packager": "^17.1.2"
+  },
+  "build": {
+    "appId": "com.ghostpilot.app",
+    "productName": "GhostPilot",
+    "files": [
+      "main.js",
+      "preload.js",
+      "src/**/*"
+    ],
+    "win": {
+      "target": "portable",
+      "icon": null,
+      "signingHashAlgorithms": null,
+      "sign": null
+    },
+    "portable": {
+      "requestExecutionLevel": "user"
+    }
   }
 }
