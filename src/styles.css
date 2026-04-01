@@ -1,0 +1,187 @@
+/* ── Reset ──────────────────────────────────── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --glass:    rgba(28, 28, 30, 0.85);
+  --glass2:   rgba(22, 22, 24, 0.95);
+  --border:   rgba(255, 255, 255, 0.10);
+  --accent:   #e0e0e0;
+  --accent2:  #ffffff;
+  --txt:      #f0f0f0;
+  --txt2:     #888888;
+  --tab-on:   rgba(255, 255, 255, 0.12);
+  --hover:    rgba(255, 255, 255, 0.07);
+  --radius:   18px;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+  font-family: -apple-system, 'Segoe UI', sans-serif;
+}
+
+/* ── Shell ──────────────────────────────────── */
+#shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--glass);
+  backdrop-filter: blur(28px) saturate(1.6);
+  -webkit-backdrop-filter: blur(28px) saturate(1.6);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.06) inset,
+    0 20px 60px rgba(0,0,0,0.75);
+}
+
+/* ── Drag bar ───────────────────────────────── */
+#drag-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px 8px;
+  -webkit-app-region: drag;
+  cursor: move;
+  flex-shrink: 0;
+  gap: 10px;
+}
+
+#drag-dots {
+  display: flex;
+  gap: 6px;
+  -webkit-app-region: drag;
+}
+#drag-dots span {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+#brand {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent2);
+  letter-spacing: 0.4px;
+  -webkit-app-region: drag;
+  flex: 1;
+  text-align: center;
+}
+
+#win-btns {
+  display: flex;
+  gap: 5px;
+  -webkit-app-region: no-drag;
+}
+
+.wbtn {
+  width: 24px; height: 24px;
+  border: none;
+  border-radius: 7px;
+  background: rgba(255,255,255,0.07);
+  color: var(--txt2);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all .15s;
+  display: flex; align-items: center; justify-content: center;
+  line-height: 1;
+}
+.wbtn:hover         { background: rgba(255,255,255,0.14); color: var(--txt); }
+.wbtn.close:hover   { background: rgba(239,68,68,.28); color: #fca5a5; }
+
+/* ── Tabs ───────────────────────────────────── */
+#tabs {
+  display: flex;
+  gap: 4px;
+  padding: 0 10px 10px;
+  flex-shrink: 0;
+}
+
+.tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 7px 4px 6px;
+  border: 1px solid transparent;
+  border-radius: 11px;
+  background: transparent;
+  color: var(--txt2);
+  font-size: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .18s ease;
+  -webkit-app-region: no-drag;
+}
+.tab svg { width: 18px; height: 18px; opacity: .7; transition: opacity .18s; }
+.tab:hover  { background: var(--hover); color: var(--txt); border-color: var(--border); }
+.tab:hover svg { opacity: 1; }
+.tab.on {
+  background: var(--tab-on);
+  color: var(--accent2);
+  border-color: rgba(255,255,255,.20);
+}
+.tab.on svg { opacity: 1; }
+
+/* ── Browser / Webview ──────────────────────── */
+#browser {
+  flex: 1;
+  min-height: 0;        /* critical: allows flex child to shrink */
+  position: relative;
+  overflow: hidden;
+  border-radius: 0 0 4px 4px;
+  background: #080610;
+  margin: 0 2px;
+}
+
+webview {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+/* ── Loader ─────────────────────────────────── */
+#loader {
+  position: absolute;
+  inset: 0;
+  background: rgba(8,6,16,.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity .3s;
+}
+#loader.gone { opacity: 0; pointer-events: none; }
+
+.ring {
+  width: 36px; height: 36px;
+  border: 3px solid rgba(120,80,255,.2);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Hint bar ───────────────────────────────── */
+#hint {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 14px;
+  background: rgba(18,18,20,.8);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+  gap: 10px;
+}
+#hint span { font-size: 9.5px; color: var(--txt2); white-space: nowrap; }
+#hint-opacity { color: #aaaaaa; font-weight: 600; flex-shrink: 0; }
+
+/* ── Scrollbar ──────────────────────────────── */
+::-webkit-scrollbar       { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,.18); border-radius: 2px; }
