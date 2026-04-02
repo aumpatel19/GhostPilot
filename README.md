@@ -15,6 +15,7 @@ A floating, always-on-top AI browser panel for Windows 11 that is **invisible to
 - **Google OAuth fix** — opens Google sign-in in a proper popup so login works
 - **Adjustable opacity** — fade the window in/out on the fly
 - **System tray** — lives in the tray, launch/hide from there
+- **Type Mode** — captures keystrokes via a Windows low-level keyboard hook and injects them directly into the AI input field, bypassing screen-sharing detection entirely
 
 ---
 
@@ -66,6 +67,8 @@ Output: `dist/GhostPilot-win32-x64/GhostPilot.exe`
 | `Ctrl+Alt+3` | Switch to Google |
 | `Ctrl+Alt+4` | Switch to Gemini |
 | `Ctrl+Alt+R` | Reload current page |
+| `Ctrl+Alt+V` | Paste clipboard and submit to AI |
+| `Ctrl+Alt+F` | Toggle Type Mode |
 | `Ctrl+Alt+=` | Increase opacity |
 | `Ctrl+Alt+-` | Decrease opacity |
 
@@ -73,18 +76,27 @@ You can also right-click the tray icon to switch sites or quit.
 
 ---
 
+## Type Mode
+
+Press `Ctrl+Alt+F` to enter Type Mode. Everything you type is captured via a low-level Windows keyboard hook (`keyboard-hook.ps1`) and injected directly into the AI chat input field. The text you type **never appears in any other window** and is not visible to screen sharing or monitoring software.
+
+Press `Enter` to submit. Press `Ctrl+Alt+F` again to exit Type Mode.
+
+---
+
 ## Project Structure
 
 ```
 GhostPilot-Windows/
-├── main.js          # Electron main process — window, tray, hotkeys
-├── preload.js       # Context bridge between main and renderer
+├── main.js              # Electron main process — window, tray, hotkeys, IPC
+├── preload.js           # Context bridge between main and renderer
+├── keyboard-hook.ps1    # Windows low-level keyboard hook (C# compiled at runtime)
 ├── src/
-│   ├── index.html   # UI layout
-│   ├── styles.css   # Frosted glass dark theme
-│   └── renderer.js  # Tab switching, webview logic
-├── start.bat        # Launch script
-└── setup.bat        # First-time install + launch
+│   ├── index.html       # UI layout
+│   ├── styles.css       # Frosted glass dark theme
+│   └── renderer.js      # Tab switching, webview logic, type mode overlay
+├── start.bat            # Launch script
+└── setup.bat            # First-time install + launch
 ```
 
 ---
@@ -95,6 +107,7 @@ GhostPilot-Windows/
 - **Vanilla JS / HTML / CSS** — no frontend framework
 - **Electron webview tag** — sandboxed browser inside the panel
 - **Windows `SetWindowDisplayAffinity`** — via Electron's `setContentProtection(true)`
+- **PowerShell + C#** — compiled at runtime to register a `SetWindowsHookEx` keyboard hook
 
 ---
 
@@ -105,6 +118,7 @@ GhostPilot-Windows/
 - The window is **resizable** from the edges
 - Opacity range is **15% – 100%**, shown in the bottom bar
 - All site logins are saved locally in `%AppData%\GhostPilot-v2`
+- Type Mode requires PowerShell to be available (built into Windows 11)
 
 ---
 

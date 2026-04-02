@@ -17,8 +17,10 @@
     "files": [
       "main.js",
       "preload.js",
+      "keyboard-hook.ps1",
       "src/**/*"
     ],
+
     "win": {
       "target": "portable",
       "icon": null,
