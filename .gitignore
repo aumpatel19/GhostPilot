@@ -1,0 +1,5 @@
+node_modules/
+dist/
+hook_out*.txt
+hook_err*.txt
+*.log
