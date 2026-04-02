@@ -122,6 +122,3 @@ GhostPilot-Windows/
 
 ---
 
-## License
-
-MIT
