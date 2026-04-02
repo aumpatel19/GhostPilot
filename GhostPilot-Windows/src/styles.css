@@ -1,0 +1,136 @@
+/* ── Reset ──────────────────────────────────── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --glass:   rgba(15, 15, 18, 0.92);
+  --border:  rgba(255, 255, 255, 0.09);
+  --accent:  #e0e0e0;
+  --txt:     #f0f0f0;
+  --txt2:    #888888;
+  --tab-on:  rgba(255, 255, 255, 0.11);
+  --hover:   rgba(255, 255, 255, 0.06);
+  --radius:  16px;
+  --green:   #4ade80;
+  --greenDim:rgba(74, 222, 128, 0.15);
+}
+
+html, body { height: 100%; overflow: hidden; background: transparent;
+  font-family: -apple-system, 'Segoe UI', sans-serif; }
+
+/* ── Shell ──────────────────────────────────── */
+#shell {
+  display: flex; flex-direction: column; height: 100vh;
+  background: var(--glass);
+  backdrop-filter: blur(24px) saturate(1.5);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.05) inset, 0 20px 60px rgba(0,0,0,0.8);
+}
+
+/* ── Drag bar ───────────────────────────────── */
+#drag-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 9px 12px 8px; -webkit-app-region: drag; cursor: move;
+  flex-shrink: 0; gap: 8px; border-bottom: 1px solid var(--border);
+}
+#drag-bar.type-mode { background: rgba(74,222,128,0.08); border-bottom-color: rgba(74,222,128,0.2); }
+#drag-bar.type-mode #brand { color: var(--green); }
+
+#drag-dots { display: flex; gap: 5px; -webkit-app-region: drag; }
+#drag-dots span {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: rgba(255,255,255,0.10); border: 1px solid rgba(255,255,255,0.07);
+}
+
+#brand {
+  font-size: 11.5px; font-weight: 600; color: #ddd; letter-spacing: 0.3px;
+  -webkit-app-region: drag; flex: 1; text-align: center;
+}
+
+#win-btns { display: flex; gap: 4px; -webkit-app-region: no-drag; }
+.wbtn {
+  width: 22px; height: 22px; border: none; border-radius: 6px;
+  background: rgba(255,255,255,0.06); color: var(--txt2);
+  font-size: 12px; cursor: pointer; transition: all .15s;
+  display: flex; align-items: center; justify-content: center;
+}
+.wbtn:hover       { background: rgba(255,255,255,0.13); color: var(--txt); }
+.wbtn.close:hover { background: rgba(239,68,68,.25); color: #fca5a5; }
+
+/* ── Tabs ───────────────────────────────────── */
+#tabs { display: flex; gap: 3px; padding: 7px 8px; flex-shrink: 0; }
+.tab {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  gap: 3px; padding: 6px 4px 5px; border: 1px solid transparent;
+  border-radius: 9px; background: transparent; color: var(--txt2);
+  font-size: 9.5px; font-weight: 500; cursor: pointer; transition: all .16s;
+  -webkit-app-region: no-drag;
+}
+.tab svg { width: 16px; height: 16px; opacity: .65; transition: opacity .16s; }
+.tab:hover { background: var(--hover); color: var(--txt); border-color: var(--border); }
+.tab:hover svg { opacity: .9; }
+.tab.on { background: var(--tab-on); color: #fff; border-color: rgba(255,255,255,.18); }
+.tab.on svg { opacity: 1; }
+
+/* ── Browser ────────────────────────────────── */
+#browser {
+  flex: 1; min-height: 0; position: relative; overflow: hidden;
+  background: #080610;
+}
+webview { position: absolute; top:0; left:0; right:0; bottom:0; width:100%; height:100%; }
+
+/* ── Loader ─────────────────────────────────── */
+#loader {
+  position: absolute; inset: 0; background: rgba(8,6,16,.95);
+  display: flex; align-items: center; justify-content: center; transition: opacity .3s;
+}
+#loader.gone { opacity:0; pointer-events:none; }
+.ring {
+  width: 32px; height: 32px;
+  border: 2.5px solid rgba(120,80,255,.2); border-top-color: #aaa;
+  border-radius: 50%; animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Typing overlay ──────────────────────────── */
+#type-overlay {
+  display: none; flex-shrink: 0;
+  background: rgba(5, 18, 10, 0.98);
+  border-top: 1px solid rgba(74, 222, 128, 0.35);
+  padding: 8px 12px 9px;
+}
+#type-overlay.active { display: block; }
+
+#type-label {
+  font-size: 9px; color: rgba(134,239,172,0.6);
+  margin-bottom: 5px; display: flex; gap: 8px; align-items: center;
+}
+#type-label kbd {
+  background: rgba(74,222,128,0.12); border: 1px solid rgba(74,222,128,0.25);
+  border-radius: 3px; padding: 1px 4px; font-size: 8.5px; font-family: monospace;
+}
+
+#type-buffer-wrap {
+  font-family: 'Courier New', monospace; font-size: 12.5px; color: #d4fde4;
+  word-break: break-all; white-space: pre-wrap; line-height: 1.5;
+  max-height: 72px; overflow-y: auto; min-height: 18px;
+}
+.cursor { color: var(--green); animation: blink .75s step-end infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ── Hint bar ───────────────────────────────── */
+#hint {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 4px 12px; background: rgba(10,10,12,.85);
+  border-top: 1px solid var(--border); flex-shrink: 0; gap: 8px;
+}
+#hint span { font-size: 9px; color: var(--txt2); white-space: nowrap; }
+#hint-opacity { color: #aaa; font-weight: 600; flex-shrink: 0; }
+#hint-status  { color: var(--green); font-size: 9px; flex: 1; text-align: center; overflow: hidden; text-overflow: ellipsis; }
+
+/* ── Scrollbar ──────────────────────────────── */
+::-webkit-scrollbar       { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,.15); border-radius: 2px; }
