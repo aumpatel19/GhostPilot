@@ -11,6 +11,7 @@ let win = null;
 let tray = null;
 let visible = true;
 let opacity = 0.92;
+let focusMode = false;
 
 const SITES = {
   chatgpt: 'https://chat.openai.com',
@@ -68,7 +69,17 @@ function createWindow() {
   win.setContentProtection(true);          // invisible to screen share
   win.setAlwaysOnTop(true, 'screen-saver');
   win.setOpacity(opacity);
+  win.setFocusable(false);                 // non-activating: clicks won't steal focus
   win.loadFile(path.join(__dirname, 'src', 'index.html'));
+
+  // Auto-revert to non-activating when window loses focus
+  win.on('blur', () => {
+    if (focusMode) {
+      focusMode = false;
+      win.setFocusable(false);
+      send('focus-mode', false);
+    }
+  });
 
   // Handle Google OAuth popups — open in a real BrowserWindow so Google allows sign-in
   win.webContents.on('did-attach-webview', (_, wc) => {
@@ -151,6 +162,14 @@ function setOpacity(delta) {
   send('opacity', Math.round(opacity * 100));
 }
 
+function toggleFocusMode() {
+  if (!win) return;
+  focusMode = !focusMode;
+  win.setFocusable(focusMode);
+  if (focusMode) win.focus();  // bring focus so keyboard works immediately
+  send('focus-mode', focusMode);
+}
+
 // ── Hotkeys ───────────────────────────────────────────────────────────────────
 function registerHotkeys() {
   const keys = [
@@ -163,6 +182,7 @@ function registerHotkeys() {
     ['Ctrl+Alt+R',    () => send('reload', null)],
     ['Ctrl+Alt+Equal',  () => setOpacity(+0.05)],
     ['Ctrl+Alt+Minus',  () => setOpacity(-0.05)],
+    ['Ctrl+Alt+F',      toggleFocusMode],
   ];
   const failed = [];
   for (const [k, fn] of keys) {
@@ -172,9 +192,10 @@ function registerHotkeys() {
 }
 
 // ── IPC ───────────────────────────────────────────────────────────────────────
-ipcMain.on('hide',  () => { if (win) { win.hide(); visible = false; refreshTrayMenu(); } });
-ipcMain.on('quit',  () => app.quit());
-ipcMain.on('load',  (_, site) => send('load', site));
+ipcMain.on('hide',              () => { if (win) { win.hide(); visible = false; refreshTrayMenu(); } });
+ipcMain.on('quit',              () => app.quit());
+ipcMain.on('load',              (_, site) => send('load', site));
+ipcMain.on('toggle-focus-mode', toggleFocusMode);
 
 // ── Boot ──────────────────────────────────────────────────────────────────────
 app.whenReady().then(() => {

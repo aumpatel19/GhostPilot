@@ -32,6 +32,7 @@ document.querySelectorAll('.tab').forEach(t =>
   t.addEventListener('click', () => load(t.dataset.site)));
 
 // ── Window buttons ───────────────────────────────────────────────────────────
+document.getElementById('btn-type').addEventListener('click', () => window.api.toggleFocusMode());
 document.getElementById('btn-hide').addEventListener('click', () => window.api.hide());
 document.getElementById('btn-quit').addEventListener('click', () => window.api.quit());
 
@@ -53,6 +54,12 @@ view.addEventListener('new-window',    e  => { view.src = e.url; });
 window.api.onLoad(site => load(site));
 window.api.onReload(() => reload());
 window.api.onOpacity(v => { hint.textContent = v + '%'; });
+window.api.onFocusMode(active => {
+  document.getElementById('drag-bar').classList.toggle('type-mode', active);
+  document.getElementById('brand').textContent = active ? '⌨️ TYPE MODE' : '👻 GhostPilot';
+  document.getElementById('btn-type').style.color = active ? '#86efac' : '';
+  if (active) view.focus();  // pull keyboard focus into the webview
+});
 
 // ── Local shortcuts (when window focused) ────────────────────────────────────
 document.addEventListener('keydown', e => {
