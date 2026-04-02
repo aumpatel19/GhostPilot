@@ -1,5 +1,10 @@
 node_modules/
 dist/
+<<<<<<< HEAD
 hook_out*.txt
 hook_err*.txt
 *.log
+=======
+*.log
+.DS_Store
+>>>>>>> 9c72acc1adfd724f22c22e755a8951c130b31a47
