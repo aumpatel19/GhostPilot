@@ -214,8 +214,42 @@ function toggleTypeMode() {
 
 // ── Clipboard submit ──────────────────────────────────────────────────────────
 function submitClipboard() {
+  const img = clipboard.readImage();
+  if (!img.isEmpty()) {
+    submitImageToAI();
+    return;
+  }
   const text = clipboard.readText().trim();
   if (text) submitTextToAI(text);
+}
+
+function submitImageToAI() {
+  if (!webviewWC || webviewWC.isDestroyed()) return;
+  send('submitting', true);
+  win.webContents.executeJavaScript(
+    `document.getElementById('brand').textContent = '📸 Pasting screenshot...';`
+  ).catch(() => {});
+
+  // Focus the AI input field first
+  webviewWC.executeJavaScript(`
+    (function() {
+      var el = document.querySelector('#prompt-textarea') ||
+               document.querySelector('div[contenteditable="true"][class*="ProseMirror"]') ||
+               document.querySelector('div[contenteditable="true"]') ||
+               document.querySelector('textarea:not([aria-hidden="true"])');
+      if (el) { el.focus(); el.click(); return true; }
+      return false;
+    })()
+  `).then(() => {
+    setTimeout(() => {
+      // Send a real Ctrl+V into the webview — pastes the image from clipboard
+      webviewWC.sendInputEvent({ type: 'keyDown', modifiers: ['ctrl'], keyCode: 'V' });
+      setTimeout(() => {
+        webviewWC.sendInputEvent({ type: 'keyUp', modifiers: ['ctrl'], keyCode: 'V' });
+        setTimeout(() => send('submitting', false), 1500);
+      }, 100);
+    }, 300);
+  }).catch(() => send('submitting', false));
 }
 
 // ── Tray icon ─────────────────────────────────────────────────────────────────

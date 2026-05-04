@@ -25,7 +25,9 @@
       "target": "portable",
       "icon": null,
       "signingHashAlgorithms": null,
-      "sign": null
+      "sign": null,
+      "certificateFile": null,
+      "certificatePassword": null
     },
     "portable": {
       "requestExecutionLevel": "user"
